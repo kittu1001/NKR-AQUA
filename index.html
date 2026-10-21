@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#087f8c">
+<title>NKR AQUA FARM</title>
+<style>
+body{margin:0;background:#eef7f7;font-family:Arial,sans-serif;color:#173b48}
+header{background:#087f8c;color:white;padding:26px 18px;text-align:center}
+main{padding:16px;max-width:650px;margin:auto}
+.card{background:white;padding:18px;border-radius:14px;margin-bottom:14px;box-shadow:0 2px 9px #0001}
+h2{font-size:18px}
+input,select,button{box-sizing:border-box;width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccd}
+button{background:#087f8c;color:white;font-weight:bold;border:0}
+small{color:#52656b}
+</style>
+</head>
+<body>
+<header><h1>🦐 NKR AQUA FARM</h1><p>Farm Management Dashboard</p></header>
+<main>
+<div class="card"><h2>Dashboard</h2><p id="summary"></p></div>
+<div class="card"><h2>Add Site</h2><input id="site" placeholder="Site name"><button onclick="addSite()">Save Site</button></div>
+<div class="card"><h2>Add Pond</h2><select id="siteChoice"></select><input id="pond" placeholder="Pond name (e.g. KR8)"><button onclick="addPond()">Save Pond</button></div>
+<div class="card"><h2>Sites & Ponds</h2><div id="list"></div></div>
+<div class="card"><h2>Data Backup</h2><button onclick="backup()">Export JSON Backup</button><small>Records are saved only in this browser. Export backups regularly.</small></div>
+</main>
+<script>
+const key='nkr_aqua_v1';
+let data;
+try{data=JSON.parse(localStorage.getItem(key))||{sites:[]}}catch(e){data={sites:[]}}
+function save(){localStorage.setItem(key,JSON.stringify(data));render()}
+function addSite(){
+let name=document.getElementById('site').value.trim();
+if(!name)return alert('Enter site name');
+if(data.sites.length>=10)return alert('Maximum 10 sites');
+data.sites.push({name,ponds:[]});document.getElementById('site').value='';save()
+}
+function addPond(){
+let i=document.getElementById('siteChoice').value;
+let name=document.getElementById('pond').value.trim();
+if(i===''||!name)return alert('Select site and enter pond name');
+data.sites[Number(i)].ponds.push(name);
+document.getElementById('pond').value='';save()
+}
+function render(){
+let total=data.sites.reduce((n,s)=>n+s.ponds.length,0);
+document.getElementById('summary').textContent=data.sites.length+' Sites • '+total+' Ponds';
+document.getElementById('siteChoice').innerHTML=data.sites.map((s,i)=>'<option value="'+i+'">'+escapeHTML(s.name)+'</option>').join('');
+document.getElementById('list').innerHTML=data.sites.map(s=>'<p><b>'+escapeHTML(s.name)+'</b>: '+s.ponds.map(escapeHTML).join(', ')+'</p>').join('')||'No sites added yet';
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function backup(){
+let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='nkr-aqua-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)
+}
+render();
+</script>
+</body>
+</html>
