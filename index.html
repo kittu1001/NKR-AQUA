@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#087f8c"><title>NKR AQUA FARM V1.25</title>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#087f8c"><title>NKR AQUA FARM V1.26</title>
 <style>body{margin:0;background:#eef7f7;color:#173b48;font-family:system-ui,Arial}header{background:#087f8c;color:white;text-align:center;padding:22px 12px}header h1{font-size:26px}main{max-width:700px;margin:auto;padding:12px}.card{background:white;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0001}h2{font-size:19px;margin:0 0 12px}input,select,button{box-sizing:border-box;width:100%;padding:12px;margin:5px 0 10px;border:1px solid #b9d2d5;border-radius:8px;font-size:16px}button{background:#087f8c;color:white;border:0;font-weight:600}button.secondary{background:#e5f3f4;color:#086774}nav{display:flex;gap:5px;overflow:auto;padding:10px;background:#d7eeee}nav button{min-width:105px;width:auto;margin:0;padding:10px}label{display:block;font-size:13px;font-weight:600;margin-top:6px}.muted{color:#617b80;font-size:13px}.record{border-top:1px solid #dde8e8;padding:9px 0;overflow-wrap:anywhere}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{padding:12px;background:#eef7f7;border-radius:9px}.metric b{display:block;font-size:21px}section[hidden]{display:none}small{font-size:12px}
 /* V1.15: one simple page selector instead of nine sideways buttons on iPhone */
 .page-switch{background:#d7eeee;padding:10px 14px;position:sticky;top:0;z-index:5}.page-switch label{margin:0 0 3px;font-size:13px}.page-switch select{margin:0;padding:11px 12px;background:#fff;font-weight:650;color:#086774}
@@ -42,8 +42,41 @@ main{padding-bottom:94px!important}
 .feed-log-note{font-size:12px;color:#668087;margin-top:10px}
 
 .pond-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.pond-tiles button{margin:0;padding:14px 5px}.lease-installment{padding:12px;background:#f2f9f9;border-radius:9px;margin:8px 0}.lease-installment input{margin-bottom:6px}.v119-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.v119-table{width:100%;border-collapse:collapse;font-size:13px}.v119-table th,.v119-table td{padding:9px 7px;text-align:left;border-bottom:1px solid #dce9e9;white-space:nowrap}.v119-table th{background:#eef7f7}.v119-table tr:active{background:#e9f5f4}.v119-feed-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #e0ebeb}.v119-feed-row input{margin:0}.v119-feed-row label{margin:0;font-size:15px}.v119-summary{font-weight:700;margin:12px 0;padding:12px;background:#eef7f7;border-radius:8px}.v119-alert{border:1px solid #e4c68d;background:#fff8e9;padding:12px;border-radius:10px;font-size:13px}
+
+/* V1.26 Modern Aqua UI refresh — visual-only; app logic and storage unchanged */
+:root{color-scheme:light;--aqua:#087f8c;--aqua-dark:#066875;--aqua-pale:#eaf5f5;--ink:#173b48;--muted:#647d83;--line:#dce9e9;--surface:#fff}
+html{background:#f3f7f8;scroll-behavior:smooth}
+body{background:#f3f7f8;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Arial,sans-serif;letter-spacing:.05px;-webkit-font-smoothing:antialiased}
+header{background:linear-gradient(135deg,#087f8c 0%,#0b9a9b 100%);color:#fff;padding:17px 14px 15px;box-shadow:0 3px 14px #075b6522}
+header h1{font-size:22px;line-height:1.25;letter-spacing:.2px;margin:2px 0 5px;font-weight:750}
+header p{font-size:12px;opacity:.92;margin:0;letter-spacing:.35px}
+main{max-width:760px;padding:10px 12px 100px}
+.card{background:var(--surface);border:1px solid #e5eeee;border-radius:15px;padding:14px;margin:9px 0;box-shadow:0 3px 12px rgba(24,67,75,.055)}
+h2{font-size:17px;font-weight:750;letter-spacing:.1px;color:#174652;margin:0 0 10px}
+h3{font-size:15px;font-weight:700;color:#24545e;margin:14px 0 7px}
+label{font-size:12px;color:#3f626a;font-weight:700;margin-top:7px}
+input,select,textarea{background:#fbfdfd;color:var(--ink);border:1px solid #d5e4e5;border-radius:10px;padding:11px 12px;font-size:15px;min-height:43px;box-shadow:inset 0 1px 2px #163c4508}
+input:focus,select:focus,textarea:focus{outline:2px solid #0b9a9b33;border-color:#0b9297;background:#fff}
+button{background:linear-gradient(135deg,#087f8c,#09969a);color:#fff;border:0;border-radius:10px;font-size:14px;font-weight:700;min-height:43px;padding:10px 13px;box-shadow:0 2px 5px #087f8c1c;transition:filter .15s ease,transform .15s ease}
+button:active{filter:brightness(.96);transform:scale(.99)}
+button.secondary,.more-links button{background:#eaf5f5;color:#08727d;box-shadow:none;border:1px solid #dceeee}
+.muted,.section-note{color:var(--muted)}
+.metric{background:linear-gradient(145deg,#f0f8f8,#eaf4f4);border:1px solid #e1eeee;border-radius:12px;padding:10px}
+.metric b{font-size:18px;color:#086f7b;line-height:1.25}
+.record{border-top:1px solid #e7eeee;padding:10px 0}
+.bottom-tabs{background:rgba(255,255,255,.97);border-top:1px solid #dce8e9;box-shadow:0 -4px 18px rgba(20,65,72,.08);backdrop-filter:blur(12px);padding-top:7px}
+.bottom-tabs button{color:#71868a;border-radius:9px;box-shadow:none;font-size:10px;min-height:50px}
+.bottom-tabs button.active{color:#087f8c;background:#eaf5f5}
+.bottom-tabs .tab-icon{font-size:20px}
+.more-links{gap:8px}.more-links button{min-height:54px;border-radius:11px;font-size:13px}
+.pond-tiles{gap:7px}.pond-tiles button{border-radius:11px;padding:12px 4px}
+.lease-installment,.harvest-card .labour-row{background:#f5fafa;border:1px solid #e1eeee;border-radius:11px}
+.v119-table th{background:#eaf5f5;color:#24545e}
+.v119-summary{background:#eaf5f5;border:1px solid #dceeee;border-radius:11px}
+@media(max-width:380px){header h1{font-size:20px}.card{padding:12px}.bottom-tabs button{font-size:9px}.bottom-tabs .tab-icon{font-size:18px}}
+
 </style></head><body>
-<header><h1>🦐 NKR AQUA FARM</h1><p>Farm Management • Version 1.25</p></header>
+<header><h1>🦐 NKR AQUA FARM</h1><p>Farm Management • Version 1.26</p></header>
 <nav><button onclick="show('dashboard')">Dashboard</button><button onclick="show('sites')">Sites</button><button onclick="show('seed')">Seed</button><button onclick="show('feed')">Feed</button><button onclick="show('expenses')">Expenses</button><button onclick="show('trial')">Trial Net</button><button onclick="show('harvest')">Harvest</button><button onclick="show('reports')">History Reports</button><button onclick="show('tithi')">తిథి</button><button onclick="show('backup')">Backup</button></nav>
 <div class="page-switch"><label for="pageSelect">Choose a page</label><select id="pageSelect" onchange="show(this.value)"><option value="dashboard">Dashboard</option><option value="sites">Sites &amp; Ponds</option><option value="seed">Seed Stocking</option><option value="feed">Daily Feed</option><option value="expenses">Expenses</option><option value="trial">Trial Net</option><option value="harvest">Harvest &amp; Final Bill</option><option value="reports">History Reports</option><option value="tithi">తిథి పేజీ</option><option value="backup">Backup &amp; Restore</option></select></div>
 <div class="bottom-tabs" role="navigation" aria-label="Main pages">
