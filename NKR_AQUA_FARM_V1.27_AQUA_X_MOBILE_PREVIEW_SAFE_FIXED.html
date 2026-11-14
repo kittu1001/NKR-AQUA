@@ -478,6 +478,7 @@ function renderBulkFeedTotal(){
    const d=a-rec;if(Math.abs(d)<0.05){status.classList.add('ok');status.textContent='✓ Matches chart'}else if(d>0){status.classList.add('high');status.textContent='Excess '+d.toFixed(1)+' kg'}else{status.classList.add('low');status.textContent='Low '+Math.abs(d).toFixed(1)+' kg'}
  });
  const diff=actualTotal-chartTotal;
+ const farmCumulative=rows.reduce((sum,row)=>{const pond=row.querySelector('input[data-pond]').dataset.pond;const date=el('bulkFeedDate')?.value||localDate();const st=latestStock(pond,date);const savedToday=data.feed.filter(r=>r.pond===pond&&r.date===date).reduce((n,r)=>n+Number(r.kg||0),0);const actual=row.querySelector('input[data-pond]').value.trim();return sum+data.feed.filter(r=>r.pond===pond&&st&&r.date>=st.date&&r.date<=date).reduce((n,r)=>n+Number(r.kg||0),0)+(actual!==''?Number(actual)-savedToday:0)},0);
  el('bulkFeedTotal').innerHTML='<b>Recommended total: '+reportNumber(chartTotal)+' kg</b><br><b>Actual entered: '+reportNumber(actualTotal)+' kg</b><br>'+actualCount+' ponds entered · Farm difference: '+(diff>0?'<span style="color:#b64b22">+'+reportNumber(diff)+' kg excess</span>':'<span style="color:#986400">'+reportNumber(Math.abs(diff))+' kg low</span>');
 }
 
@@ -531,6 +532,9 @@ function renderBulkFeed(){
    const saved=data.feed.filter(r=>r.pond===name&&r.date===date).reduce((n,r)=>n+Number(r.kg||0),0);
    const yesterday=data.feed.filter(r=>r.pond===name&&r.date===ydate).reduce((n,r)=>n+Number(r.kg||0),0);
    const actual=previous[name]!==undefined?previous[name]:(saved?String(saved):'');
+   const stock=latestStock(name,date);
+   const cropFeed=data.feed.filter(r=>r.pond===name&&stock&&r.date>=stock.date&&r.date<=date).reduce((n,r)=>n+Number(r.kg||0),0);
+   const cumulative=cropFeed+(actual!==''?Number(actual)-saved:0);
    const changePct=yesterday>0&&actual!==''?((Number(actual)-yesterday)/yesterday*100):null;
    const chart=c&&!c.invalid?c.kg.toFixed(1):'';
    const diff=(actual!==''&&chart!=='')?(Number(actual)-Number(chart)):null;
@@ -545,12 +549,13 @@ function renderBulkFeed(){
     '<td data-label="Chart/day (kg)"><input type="number" readonly value="'+chart+'" aria-label="Chart feed kg for '+esc(name)+'"></td>'+
     '<td data-label="Actual today (kg)"><input class="actual-input" type="number" inputmode="decimal" min="0" step="0.001" data-pond="'+esc(name)+'" placeholder="Actual kg" value="'+esc(actual)+'" oninput="renderBulkFeedTotal()"></td>'+
     '<td data-label="Yesterday (kg)">'+(yesterday?reportNumber(yesterday):'—')+'</td>'+
-    '<td class="diff-cell" data-label="Chart difference" data-diff="'+esc(name)+'">'+(diff===null?'—':(diff>0?'+':'')+diff.toFixed(1)+' kg')+'</td>'+
+    '<td class="diff-cell" data-label="+ / −" data-diff="'+esc(name)+'">'+(diff===null?'—':(diff>0?'+':'')+diff.toFixed(1)+' kg')+'</td>'+
+    '<td data-label="Total Feed Till Date" data-cumulative="'+esc(name)+'">'+reportNumber(cumulative)+' kg</td>'+
     '<td data-label="Vs yesterday">'+(changePct===null?'—':(changePct>0?'+':'')+changePct.toFixed(1)+'%')+'</td>'+
     '<td class="status-cell '+cls+'" data-label="Status" data-status="'+esc(name)+'">'+status+'</td>'+
     '<td class="v127-subnote" data-label="Chart note">'+estimate+'</td></tr>';
  }).join('');
- host.innerHTML=names.length?'<div class="v127-table-wrap"><table class="v127-table"><thead><tr><th>Pond</th><th>DOC</th><th>Seed (lakh)</th><th>Chart ABW (g)</th><th>Feed No.</th><th>Chart/day (kg)</th><th>Today (kg)</th><th>Yesterday (kg)</th><th>Chart difference</th><th>Vs yesterday</th><th>Status</th><th>Chart note</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="muted">No running ponds with a valid stocking record for this date.</p>';
+ host.innerHTML=names.length?'<div class="v127-running-count"><b>Total Running Ponds: '+names.length+'</b></div><div class="v127-table-wrap"><table class="v127-table"><thead><tr><th>Pond</th><th>DOC</th><th>Seed (lakh)</th><th>Chart ABW (g)</th><th>Feed No.</th><th>Chart/day (kg)</th><th>Today (kg)</th><th>Yesterday (kg)</th><th>+ / −</th><th>Total Feed Till Date</th><th>Vs yesterday</th><th>Status</th><th>Chart note</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="muted">No running ponds with a valid stocking record for this date.</p>';
  renderBulkFeedTotal();
 }
 function renderBulkFeedTotal(){
@@ -576,11 +581,12 @@ function renderBulkFeedTotal(){
    else{status.classList.add('low');status.textContent='Low'}
  });
  const diff=actualTotal-chartTotal;
+ const farmCumulative=rows.reduce((sum,row)=>{const pond=row.querySelector('input[data-pond]').dataset.pond;const date=el('bulkFeedDate')?.value||localDate();const st=latestStock(pond,date);const savedToday=data.feed.filter(r=>r.pond===pond&&r.date===date).reduce((n,r)=>n+Number(r.kg||0),0);const actual=row.querySelector('input[data-pond]').value.trim();return sum+data.feed.filter(r=>r.pond===pond&&st&&r.date>=st.date&&r.date<=date).reduce((n,r)=>n+Number(r.kg||0),0)+(actual!==''?Number(actual)-savedToday:0)},0);
  el('bulkFeedTotal').innerHTML='<div class="v127-summary-grid">'+
   '<div class="metric"><small>Total recommended</small><b>'+reportNumber(chartTotal)+' kg</b></div>'+
   '<div class="metric"><small>Total actual entered</small><b>'+reportNumber(actualTotal)+' kg</b></div>'+
   '<div class="metric"><small>Total difference</small><b>'+(diff>0?'+':'')+reportNumber(diff)+' kg</b><small>'+(diff>0?'Excess':diff<0?'Below chart':'Matches chart')+'</small></div>'+
-  '<div class="metric"><small>Ponds entered</small><b>'+actualCount+' / '+rows.length+'</b></div></div>';
+  '<div class="metric"><small>Running ponds</small><b>'+rows.length+'</b></div><div class="metric"><small>Farm total feed till date</small><b>'+reportNumber(farmCumulative)+' kg</b></div><div class="metric"><small>Ponds entered</small><b>'+actualCount+' / '+rows.length+'</b></div></div>';
  const yesterday=new Date(date+'T00:00:00');yesterday.setDate(yesterday.getDate()-1);
  const ydate=yesterday.getFullYear()+'-'+String(yesterday.getMonth()+1).padStart(2,'0')+'-'+String(yesterday.getDate()).padStart(2,'0');
  const active=new Set(rows.map(r=>r.querySelector('input[data-pond]').dataset.pond));
